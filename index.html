@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NexusAI — Advanced AI Assistant</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192x192.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* === [SAME AS PREVIOUS CSS] === */
+        /* Paste the entire CSS from previous version here — unchanged */
         :root {
             --primary: #6C5CE7;
             --secondary: #A29BFE;
@@ -729,7 +733,7 @@
             text-decoration: underline;
         }
 
-        /* Sidebar (for chat history) */
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 70px;
@@ -853,6 +857,122 @@
             transform: scale(1.1);
         }
 
+        /* Persona Selector */
+        .persona-selector {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 12px;
+            z-index: 85;
+            display: none;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .persona-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .persona-item:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .persona-item.active {
+            background: rgba(108, 92, 231, 0.2);
+            border-left: 3px solid var(--primary);
+        }
+
+        .persona-item i {
+            color: var(--primary);
+        }
+
+        /* Knowledge Base Search */
+        .knowledge-search {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 12px;
+            z-index: 85;
+            display: none;
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .knowledge-search input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .knowledge-result {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .knowledge-result:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .knowledge-result:last-child {
+            border-bottom: none;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 12px 20px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .toast i {
+            font-size: 1rem;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .sidebar {
@@ -922,44 +1042,88 @@
             border: 0;
         }
 
-        /* Toast Notification */
-        .toast {
+        /* WebRTC Overlay */
+        .rtc-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 900;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .rtc-call {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .rtc-call button {
+            margin: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .rtc-call .join {
+            background: var(--primary);
+            color: white;
+        }
+
+        .rtc-call .leave {
+            background: var(--error);
+            color: white;
+        }
+
+        /* PWA Install Prompt */
+        .pwa-prompt {
             position: fixed;
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--card-bg);
-            color: var(--text);
+            background: var(--primary);
+            color: white;
             padding: 12px 20px;
             border-radius: 24px;
+            z-index: 999;
+            display: none;
+            font-size: 0.9rem;
             box-shadow: var(--shadow);
-            z-index: 200;
-            opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            animation: fadeInUp 0.5s ease-out;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        .toast.success {
-            border-left: 4px solid var(--success);
-        }
-
-        .toast.error {
-            border-left: 4px solid var(--error);
-        }
-
-        .toast i {
-            font-size: 1rem;
+        .pwa-prompt button {
+            color: white;
+            background: transparent;
+            border: none;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
         }
     </style>
 </head>
 <body>
+    <!-- PWA Install Prompt -->
+    <div class="pwa-prompt" id="pwaPrompt">
+        Install NexusAI for offline access? <button id="installBtn">Install</button>
+    </div>
+
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -989,6 +1153,12 @@
             <button class="header-btn" id="toggleSidebar" aria-label="Toggle chat history">
                 <i class="fas fa-list"></i>
             </button>
+            <button class="header-btn" id="personaToggle" aria-label="Select AI persona">
+                <i class="fas fa-user-shield"></i>
+            </button>
+            <button class="header-btn" id="knowledgeToggle" aria-label="Search knowledge base">
+                <i class="fas fa-book-open"></i>
+            </button>
             <div class="user-avatar" id="userAvatar">U</div>
         </div>
     </div>
@@ -1001,15 +1171,30 @@
                 NexusAI
             </div>
             <div class="message-bubble">
-                <p>Hello! I'm your advanced AI assistant. I can help you with coding, analysis, creative writing, or just chat. Try asking me something like:</p>
-                <ul style="margin: 12px 0;">
-                    <li>“Explain quantum computing simply”</li>
-                    <li>“Write Python code for data visualization”</li>
-                    <li>“What’s the future of AI?”</li>
-                </ul>
+                <p>Hello! I'm your advanced AI assistant. I can help you with coding, analysis, creative writing, or just chat.</p>
+                <p><strong>Try:</strong> “Explain quantum computing simply” or “Act as a doctor and diagnose this symptom.”</p>
                 <img src="https://source.unsplash.com/random/300x200/?ai,technology" alt="AI Technology" onerror="this.style.display='none'" style="max-width: 100%; margin-top: 16px;">
             </div>
             <div class="message-time">Just now</div>
+        </div>
+    </div>
+
+    <!-- Persona Selector -->
+    <div class="persona-selector" id="personaSelector">
+        <div class="persona-item active" data-persona="general">🤖 General Assistant</div>
+        <div class="persona-item" data-persona="doctor">👨‍⚕️ Doctor</div>
+        <div class="persona-item" data-persona="lawyer">⚖️ Lawyer</div>
+        <div class="persona-item" data-persona="poet">📚 Poet</div>
+        <div class="persona-item" data-persona="teacher">🎓 Teacher</div>
+        <div class="persona-item" data-persona="engineer">⚙️ Engineer</div>
+        <div class="persona-item" data-persona="business">💼 Business Strategist</div>
+    </div>
+
+    <!-- Knowledge Base Search -->
+    <div class="knowledge-search" id="knowledgeSearch">
+        <input type="text" id="knowledgeInput" placeholder="Search knowledge base..." autocomplete="off">
+        <div id="knowledgeResults">
+            <!-- Results loaded dynamically -->
         </div>
     </div>
 
@@ -1104,6 +1289,16 @@
         </div>
     </div>
 
+    <!-- WebRTC Call Overlay -->
+    <div class="rtc-overlay" id="rtcOverlay">
+        <div class="rtc-call">
+            <h3>Collaborative Session</h3>
+            <p>Your session ID: <strong id="rtcSessionId">-</strong></p>
+            <button class="join" id="rtcJoin">Join Session</button>
+            <button class="leave" id="rtcLeave">Leave</button>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
@@ -1140,6 +1335,18 @@
         const exportBtn = document.getElementById('exportBtn');
         const toast = document.getElementById('toast');
         const toastText = document.getElementById('toastText');
+        const personaSelector = document.getElementById('personaSelector');
+        const personaToggle = document.getElementById('personaToggle');
+        const knowledgeSearch = document.getElementById('knowledgeSearch');
+        const knowledgeToggle = document.getElementById('knowledgeToggle');
+        const knowledgeInput = document.getElementById('knowledgeInput');
+        const knowledgeResults = document.getElementById('knowledgeResults');
+        const rtcOverlay = document.getElementById('rtcOverlay');
+        const rtcSessionId = document.getElementById('rtcSessionId');
+        const rtcJoin = document.getElementById('rtcJoin');
+        const rtcLeave = document.getElementById('rtcLeave');
+        const pwaPrompt = document.getElementById('pwaPrompt');
+        const installBtn = document.getElementById('installBtn');
 
         // App State
         let isDarkMode = false;
@@ -1147,47 +1354,318 @@
         let recognition;
         let selectedImage = null;
         let currentSessionId = generateSessionId();
-        let conversationHistory = [];
-        let isTyping = false;
         let currentUser = null;
+        let currentPersona = 'general';
+        let db; // IndexedDB instance
+        let isTyping = false;
+        let peerConnection;
+        let dataChannel;
 
-        // Initialize Speech Recognition
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
+        // Initialize IndexedDB for large histories
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('NexusAIDB', 1);
 
-            recognition.onstart = () => {
-                isListening = true;
-                voiceAssistant.innerHTML = '<i class="fas fa-microphone-slash"></i>';
-                voiceAssistant.classList.add('listening');
-                addMessage('ai', 'Listening... Speak clearly.');
-            };
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript.trim();
-                messageInput.value = transcript;
-                sendMessage();
-            };
-
-            recognition.onerror = (event) => {
-                console.warn('Speech recognition error:', event.error);
-                addMessage('ai', 'Voice input failed. Please try again or use text.');
-            };
-
-            recognition.onend = () => {
-                isListening = false;
-                voiceAssistant.innerHTML = '<i class="fas fa-microphone"></i>';
-                voiceAssistant.classList.remove('listening');
-            };
-        } else {
-            document.getElementById('voiceBtn').style.display = 'none';
-            voiceAssistant.style.display = 'none';
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('conversations')) {
+                        const store = db.createObjectStore('conversations', { keyPath: 'sessionId', autoIncrement: false });
+                        store.createIndex('userId', 'userId', { unique: false });
+                        store.createIndex('timestamp', 'timestamp', { unique: false });
+                    }
+                    if (!db.objectStoreNames.contains('knowledge')) {
+                        const store = db.createObjectStore('knowledge', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('category', 'category', { unique: false });
+                        store.createIndex('content', 'content', { unique: false });
+                    }
+                };
+            });
         }
 
-        // Toggle Dark/Light Mode
+        // Save conversation to IndexedDB
+        async function saveConversationToDB() {
+            const messages = Array.from(chatContainer.children).map(el => {
+                const sender = el.classList.contains('user-message') ? 'user' : 'ai';
+                const text = el.querySelector('.message-bubble').innerHTML;
+                return { sender, text, time: new Date().toISOString() };
+            });
+
+            const tx = db.transaction('conversations', 'readwrite');
+            const store = tx.objectStore('conversations');
+            const record = {
+                sessionId: currentSessionId,
+                userId: currentUser?.email || 'anonymous',
+                messages: messages,
+                timestamp: Date.now(),
+                persona: currentPersona
+            };
+
+            await new Promise((resolve, reject) => {
+                const req = store.put(record);
+                req.onsuccess = resolve;
+                req.onerror = () => reject(req.error);
+            });
+
+            addToHistory(currentSessionId, messages[0]?.text?.substring(0, 40) || 'New Chat');
+        }
+
+        // Load conversation from IndexedDB
+        async function loadConversationFromDB(sessionId) {
+            const tx = db.transaction('conversations', 'readonly');
+            const store = tx.objectStore('conversations');
+            const req = store.get(sessionId);
+
+            return new Promise((resolve, reject) => {
+                req.onsuccess = () => {
+                    if (req.result) {
+                        currentSessionId = sessionId;
+                        currentPersona = req.result.persona || 'general';
+                        updatePersonaUI(currentPersona);
+                        chatContainer.innerHTML = '';
+                        req.result.messages.forEach(msg => {
+                            addMessage(msg.sender, msg.text);
+                        });
+                        showToast('Loaded previous chat', 'success');
+                        resolve();
+                    } else {
+                        resolve();
+                    }
+                };
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        // Populate knowledge base (mock data)
+        async function populateKnowledgeBase() {
+            const knowledgeData = [
+                { category: 'medical', content: 'Common symptoms of diabetes include frequent urination, excessive thirst, unexplained weight loss, and fatigue.' },
+                { category: 'legal', content: 'In contract law, consideration is something of value exchanged between parties to form a binding agreement.' },
+                { category: 'literary', content: 'Poetry often uses metaphor, rhythm, and imagery to evoke emotion beyond literal meaning.' },
+                { category: 'education', content: 'The Socratic method encourages critical thinking through disciplined questioning.' },
+                { category: 'engineering', content: 'Finite element analysis (FEA) is used to predict how structures react to forces, vibrations, heat, and other physical effects.' },
+                { category: 'business', content: 'SWOT analysis evaluates Strengths, Weaknesses, Opportunities, and Threats for strategic planning.' }
+            ];
+
+            const tx = db.transaction('knowledge', 'readwrite');
+            const store = tx.objectStore('knowledge');
+
+            for (const item of knowledgeData) {
+                await new Promise((resolve, reject) => {
+                    const req = store.add(item);
+                    req.onsuccess = resolve;
+                    req.onerror = () => reject(req.error);
+                });
+            }
+        }
+
+        // Search knowledge base
+        async function searchKnowledge(query) {
+            if (!query.trim()) return;
+            knowledgeResults.innerHTML = '<p class="skeleton-text" style="height: 20px;"></p>';
+
+            const tx = db.transaction('knowledge', 'readonly');
+            const store = tx.objectStore('knowledge');
+            const index = store.index('content');
+            const req = index.getAll();
+
+            return new Promise((resolve) => {
+                req.onsuccess = () => {
+                    const results = req.result.filter(item =>
+                        item.content.toLowerCase().includes(query.toLowerCase())
+                    ).slice(0, 5);
+
+                    knowledgeResults.innerHTML = '';
+                    if (results.length === 0) {
+                        knowledgeResults.innerHTML = '<p>No results found.</p>';
+                        resolve([]);
+                        return;
+                    }
+
+                    results.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'knowledge-result';
+                        resultDiv.textContent = item.content.substring(0, 150) + '...';
+                        resultDiv.onclick = () => {
+                            addMessage('ai', `Based on my knowledge: ${item.content}`);
+                            knowledgeSearch.style.display = 'none';
+                        };
+                        knowledgeResults.appendChild(resultDiv);
+                    });
+                    resolve(results);
+                };
+                req.onerror = () => {
+                    knowledgeResults.innerHTML = '<p>Error loading knowledge.</p>';
+                    resolve([]);
+                };
+            });
+        }
+
+        // Toggle persona selector
+        personaToggle.addEventListener('click', () => {
+            personaSelector.style.display = personaSelector.style.display === 'flex' ? 'none' : 'flex';
+            knowledgeSearch.style.display = 'none';
+        });
+
+        // Select persona
+        personaSelector.querySelectorAll('.persona-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const persona = item.dataset.persona;
+                currentPersona = persona;
+                updatePersonaUI(persona);
+                personaSelector.style.display = 'none';
+                showToast(`Persona set to: ${item.textContent}`, 'success');
+                addMessage('ai', `I am now acting as a ${persona === 'doctor' ? 'medical professional' : persona === 'poet' ? 'poet' : persona}.`);
+            });
+        });
+
+        function updatePersonaUI(persona) {
+            personaSelector.querySelectorAll('.persona-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.persona === persona);
+            });
+        }
+
+        // Knowledge search
+        knowledgeToggle.addEventListener('click', () => {
+            knowledgeSearch.style.display = knowledgeSearch.style.display === 'flex' ? 'none' : 'flex';
+            personaSelector.style.display = 'none';
+            knowledgeInput.focus();
+        });
+
+        knowledgeInput.addEventListener('input', debounce(async (e) => {
+            await searchKnowledge(e.target.value);
+        }, 300));
+
+        // Debounce utility
+        function debounce(func, delay) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, delay);
+            };
+        }
+
+        // WebRTC Real-Time Collaboration
+        async function initWebRTC() {
+            const pcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+            peerConnection = new RTCPeerConnection(pcConfig);
+            dataChannel = peerConnection.createDataChannel('chat');
+
+            dataChannel.onopen = () => {
+                showToast('Collaboration connected!', 'success');
+            };
+
+            dataChannel.onmessage = (event) => {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'message') {
+                    addMessage(msg.sender, msg.text);
+                }
+            };
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    // In real app: send candidate to signaling server
+                    console.log('ICE Candidate:', event.candidate);
+                }
+            };
+
+            // Offer creation
+            rtcJoin.addEventListener('click', async () => {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                rtcSessionId.textContent = currentSessionId;
+                // In real app: broadcast offer to signaling server
+                showToast(`Share this ID: ${currentSessionId} with a collaborator`, 'info');
+            });
+
+            // Join session by ID (mock)
+            document.addEventListener('keydown', async (e) => {
+                if (e.ctrlKey && e.key === 'j') {
+                    const sessionId = prompt('Enter session ID to join:');
+                    if (sessionId) {
+                        // In real app: fetch SDP from signaling server
+                        alert(`Mock: Joined session ${sessionId}`);
+                    }
+                }
+            });
+
+            rtcLeave.addEventListener('click', () => {
+                peerConnection.close();
+                rtcOverlay.style.display = 'none';
+                showToast('Left collaborative session', 'info');
+            });
+
+            // Show overlay
+            document.getElementById('toggleCollab').addEventListener('click', () => {
+                rtcOverlay.style.display = 'flex';
+            });
+        }
+
+        // Initialize PWA
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            pwaPrompt.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    pwaPrompt.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // Initialize App
+        async function initializeApp() {
+            await initIndexedDB();
+            await populateKnowledgeBase();
+
+            // Check for saved theme
+            if (localStorage.getItem('darkMode') === 'true') {
+                isDarkMode = true;
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+
+            // Check for saved user
+            const savedUser = localStorage.getItem('nexusUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUIForUser(currentUser);
+                loadConversationHistory();
+            }
+
+            // Load last session if exists
+            const lastSessionId = localStorage.getItem('lastSessionId');
+            if (lastSessionId) {
+                await loadConversationFromDB(lastSessionId);
+            }
+
+            // Init WebRTC
+            initWebRTC();
+
+            // Add welcome message
+            setTimeout(() => {
+                addMessage('ai', '💡 Tip: Press <kbd>Ctrl+J</kbd> to join a collaborative session!');
+            }, 2000);
+        }
+
+        // Toggle Dark Mode
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark-mode', isDarkMode);
@@ -1196,33 +1674,7 @@
             showToast('Theme toggled', 'success');
         }
 
-        // Check system preference
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            isDarkMode = true;
-            document.body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('darkMode');
-        if (savedTheme === 'true') {
-            isDarkMode = true;
-            document.body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-
-        // Load user session
-        const savedUser = localStorage.getItem('nexusUser');
-        if (savedUser) {
-            currentUser = JSON.parse(savedUser);
-            updateUIForUser(currentUser);
-            loadConversationHistory();
-        }
-
-        // Theme Toggle Event
-        themeToggle.addEventListener('click', toggleTheme);
-
-        // Sidebar Toggle
+        // Toggle Sidebar
         toggleSidebar.addEventListener('click', () => {
             sidebar.classList.toggle('open');
         });
@@ -1231,7 +1683,7 @@
             sidebar.classList.remove('open');
         });
 
-        // Image Attachment Handling
+        // Image Attachment
         attachBtn.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -1264,13 +1716,11 @@
             const message = messageInput.value.trim();
             if (!message && !selectedImage) return;
 
-            // Disable input during processing
             isTyping = true;
             messageInput.disabled = true;
             sendBtn.disabled = true;
             sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-            // Add user message
             addMessage('user', message);
             if (selectedImage) {
                 const lastMsg = chatContainer.lastElementChild;
@@ -1292,81 +1742,67 @@
                 attachmentPreview.style.display = 'none';
             }
 
-            // Clear input
             messageInput.value = '';
             messageInput.style.height = 'auto';
             messageInput.focus();
 
-            // Show typing indicator
             const typingId = showTypingIndicator();
 
-            // Simulate AI response stream
-            setTimeout(() => {
+            try {
+                const response = await callLLMBackend(message);
                 removeTypingIndicator(typingId);
-                streamResponse(message);
-            }, 800);
-        }
-
-        // Streaming AI Response (Simulates LLM token-by-token)
-        async function streamResponse(userMessage) {
-            const responseDiv = document.createElement('div');
-            responseDiv.className = 'message ai-message';
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            responseDiv.innerHTML = `
-                <div class="message-sender">
-                    <i class="fas fa-robot"></i>
-                    NexusAI
-                </div>
-                <div class="message-bubble" id="streaming-response"></div>
-                <div class="message-time">${time}</div>
-                <div class="message-actions">
-                    <button class="message-action-btn copy-btn" title="Copy"><i class="fas fa-copy"></i></button>
-                    <button class="message-action-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
-            chatContainer.appendChild(responseDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const responseBubble = document.getElementById('streaming-response');
-            const fullResponse = await generateStreamingResponse(userMessage);
-            let displayedText = '';
-
-            // Stream character by character
-            for (let i = 0; i <= fullResponse.length; i++) {
-                displayedText = fullResponse.substring(0, i);
-                responseBubble.innerHTML = formatResponse(displayedText);
-                await new Promise(r => setTimeout(r, 10)); // Delay per char
+                addMessage('ai', formatResponse(response));
+                saveConversationToDB();
+                localStorage.setItem('lastSessionId', currentSessionId);
+            } catch (err) {
+                removeTypingIndicator(typingId);
+                addMessage('ai', `⚠️ Error contacting AI service: ${err.message}. Try again later.`);
+            } finally {
+                isTyping = false;
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             }
-
-            // Enable buttons
-            isTyping = false;
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
-            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-
-            // Save to history
-            saveConversation();
         }
 
-        // Format response with markdown support
+        // Call OpenAI / Llama 3 backend
+        async function callLLMBackend(prompt) {
+            const payload = {
+                prompt: prompt,
+                persona: currentPersona,
+                model: 'gpt-4o-mini', // Change to 'llama-3-8b' if self-hosted
+                temperature: 0.7
+            };
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser?.token || 'dummy-token'}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Failed to reach AI backend');
+
+            const data = await response.json();
+            return data.response;
+        }
+
+        // Format response with markdown
         function formatResponse(text) {
-            // Code blocks
             text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
                 const language = lang || 'plaintext';
                 return `<div class="code-block"><div class="code-header"><span>${language}</span><button class="copy-code-btn" onclick="copyToClipboard('${code.replace(/'/g, "\\'")}')">Copy</button></div>${highlightCode(code, language)}</div>`;
             });
 
-            // Bold
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Italic
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            // Links
             text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: var(--primary); text-decoration: underline;">$1</a>');
 
             return text;
         }
 
-        // Syntax highlighter (basic)
         function highlightCode(code, language) {
             if (language === 'javascript' || language === 'js') {
                 return code.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/|".*?"|'.*?'|\b(function|const|let|var|return|if|else|for|while|class|extends|import|export|default)\b)/gm, (match) => {
@@ -1379,34 +1815,7 @@
             return code;
         }
 
-        // Mock AI response generator
-        async function generateStreamingResponse(prompt) {
-            // Simulate network delay
-            await new Promise(r => setTimeout(r, 1000));
-
-            const prompts = [
-                "I've analyzed your request thoroughly. Here's what I found...",
-                "Based on current research and best practices, I recommend:",
-                "Let me break this down step by step:",
-                "The most effective approach would be:",
-                "Here's a comprehensive overview:"
-            ];
-
-            const baseResponses = [
-                "Artificial intelligence is transforming every industry. From healthcare diagnostics to autonomous vehicles, AI enables systems to learn from data, adapt to new inputs, and perform human-like tasks.",
-                "Here's a simple Python script to visualize data using matplotlib:\n\n```python\nimport matplotlib.pyplot as plt\n\nx = [1, 2, 3, 4]\ny = [10, 20, 25, 30]\nplt.plot(x, y)\nplt.title('Sample Plot')\nplt.xlabel('X-axis')\nplt.ylabel('Y-axis')\nplt.show()\n```",
-                "Quantum computing leverages superposition and entanglement to solve problems exponentially faster than classical computers. While still emerging, companies like IBM and Google are already deploying quantum processors with over 100 qubits.",
-                "When designing user interfaces, prioritize accessibility: use semantic HTML, ARIA labels, sufficient contrast ratios, and keyboard navigation. Tools like Lighthouse can audit your site.",
-                "The future of AI lies in multimodal models that understand text, images, audio, and video together. This enables assistants like me to interpret complex queries involving multiple media types."
-            ];
-
-            const randomBase = baseResponses[Math.floor(Math.random() * baseResponses.length)];
-            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-
-            return `${randomPrompt} ${randomBase}`;
-        }
-
-        // Copy to clipboard utility
+        // Copy to clipboard
         window.copyToClipboard = (text) => {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Copied to clipboard!', 'success');
@@ -1430,6 +1839,10 @@
                 </div>
                 <div class="message-bubble">${text}</div>
                 <div class="message-time">${time}</div>
+                <div class="message-actions">
+                    <button class="message-action-btn copy-btn" title="Copy"><i class="fas fa-copy"></i></button>
+                    <button class="message-action-btn delete-btn" title="Delete"><i class="fas fa-trash"></i></button>
+                </div>
             `;
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -1465,7 +1878,42 @@
             if (el) el.remove();
         }
 
-        // Voice Assistant Click
+        // Voice Assistant
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                isListening = true;
+                voiceAssistant.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                voiceAssistant.classList.add('listening');
+                addMessage('ai', 'Listening... Speak clearly.');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.trim();
+                messageInput.value = transcript;
+                sendMessage();
+            };
+
+            recognition.onerror = (event) => {
+                console.warn('Speech recognition error:', event.error);
+                addMessage('ai', 'Voice input failed. Please try again or use text.');
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                voiceAssistant.innerHTML = '<i class="fas fa-microphone"></i>';
+                voiceAssistant.classList.remove('listening');
+            };
+        } else {
+            document.getElementById('voiceBtn').style.display = 'none';
+            voiceAssistant.style.display = 'none';
+        }
+
         voiceAssistant.addEventListener('click', () => {
             if (!recognition) {
                 showToast('Voice input not supported in this browser.', 'error');
@@ -1478,7 +1926,6 @@
             }
         });
 
-        // Voice Button Click
         document.getElementById('voiceBtn').addEventListener('click', () => {
             if (!recognition) {
                 showToast('Voice input not supported.', 'error');
@@ -1497,7 +1944,7 @@
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
 
-        // Send on Enter (without Shift)
+        // Send on Enter
         messageInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1505,10 +1952,9 @@
             }
         });
 
-        // Send button click
         sendBtn.addEventListener('click', sendMessage);
 
-        // Modal Handling
+        // Modals
         loginBtn.addEventListener('click', () => loginModal.style.display = 'flex');
         signupBtn.addEventListener('click', () => signupModal.style.display = 'flex');
 
@@ -1536,11 +1982,10 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            // Simulate API call
             showToast('Logging in...', 'success');
             await new Promise(r => setTimeout(r, 1500));
 
-            currentUser = { name: email.split('@')[0], email };
+            currentUser = { name: email.split('@')[0], email, token: 'mock-jwt-token' };
             localStorage.setItem('nexusUser', JSON.stringify(currentUser));
             updateUIForUser(currentUser);
             loginModal.style.display = 'none';
@@ -1563,7 +2008,7 @@
             showToast('Creating account...', 'success');
             await new Promise(r => setTimeout(r, 1500));
 
-            currentUser = { name, email };
+            currentUser = { name, email, token: 'mock-jwt-token' };
             localStorage.setItem('nexusUser', JSON.stringify(currentUser));
             updateUIForUser(currentUser);
             signupModal.style.display = 'none';
@@ -1571,7 +2016,6 @@
             showToast(`Welcome aboard, ${name}!`, 'success');
         });
 
-        // Update UI after login
         function updateUIForUser(user) {
             document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
             document.querySelectorAll('.auth-btn').forEach(btn => btn.style.display = 'none');
@@ -1582,29 +2026,7 @@
             return 'sess_' + Math.random().toString(36).substring(2, 15);
         }
 
-        // Save conversation to localStorage
-        function saveConversation() {
-            const messages = Array.from(chatContainer.children).map(el => {
-                const sender = el.classList.contains('user-message') ? 'user' : 'ai';
-                const text = el.querySelector('.message-bubble').innerHTML;
-                return { sender, text, time: new Date().toISOString() };
-            });
-            localStorage.setItem(`conversation_${currentSessionId}`, JSON.stringify(messages));
-            addToHistory(currentSessionId, messages[0]?.text?.substring(0, 40) || 'New Chat');
-        }
-
-        // Load conversation history
-        function loadConversationHistory() {
-            historyList.innerHTML = '';
-            const keys = Object.keys(localStorage).filter(k => k.startsWith('conversation_'));
-            keys.forEach(key => {
-                const sessionId = key.replace('conversation_', '');
-                const messages = JSON.parse(localStorage.getItem(key));
-                const firstMsg = messages[0]?.text || 'Empty';
-                addToHistory(sessionId, firstMsg.substring(0, 40) + (firstMsg.length > 40 ? '...' : ''));
-            });
-        }
-
+        // Add to history
         function addToHistory(sessionId, title) {
             const item = document.createElement('div');
             item.className = 'chat-history-item';
@@ -1612,21 +2034,25 @@
                 <div class="chat-history-title">${title}</div>
                 <div class="chat-history-time">${new Date().toLocaleDateString()}</div>
             `;
-            item.addEventListener('click', () => {
-                currentSessionId = sessionId;
-                loadSession(sessionId);
+            item.addEventListener('click', async () => {
+                await loadConversationFromDB(sessionId);
             });
             historyList.prepend(item);
         }
 
-        function loadSession(sessionId) {
-            const messages = JSON.parse(localStorage.getItem(`conversation_${sessionId}`)) || [];
-            chatContainer.innerHTML = '';
-            messages.forEach(msg => {
-                addMessage(msg.sender, msg.text);
-            });
-            sidebar.classList.remove('open');
-            showToast('Loaded previous chat', 'success');
+        // Load history
+        async function loadConversationHistory() {
+            historyList.innerHTML = '';
+            const tx = db.transaction('conversations', 'readonly');
+            const store = tx.objectStore('conversations');
+            const req = store.getAll();
+
+            req.onsuccess = () => {
+                req.result.sort((a, b) => b.timestamp - a.timestamp).slice(0, 10).forEach(item => {
+                    const firstMsg = item.messages[0]?.text?.substring(0, 40) || 'Empty';
+                    addToHistory(item.sessionId, firstMsg + (firstMsg.length > 40 ? '...' : ''));
+                });
+            };
         }
 
         // Export Conversation
@@ -1637,7 +2063,14 @@
                 return { sender, text, time: new Date().toISOString() };
             });
 
-            const blob = new Blob([JSON.stringify({ session: currentSessionId, messages, user: currentUser }, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify({
+                session: currentSessionId,
+                messages,
+                user: currentUser,
+                persona: currentPersona,
+                exportedAt: new Date().toISOString()
+            }, null, 2)], { type: 'application/json' });
+
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1648,7 +2081,7 @@
         });
 
         // New Chat
-        newChatBtn.addEventListener('click', () => {
+        newChatBtn.addEventListener('click', async () => {
             currentSessionId = generateSessionId();
             chatContainer.innerHTML = '';
             addMessage('ai', 'Hello! I’m your AI assistant. How can I help you today?');
@@ -1665,15 +2098,19 @@
             }, 3000);
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Welcome message
-            setTimeout(() => {
-                if (Math.random() > 0.5) {
-                    addMessage('ai', '💡 Pro Tip: Press <kbd>Ctrl+Enter</kbd> to send messages quickly!');
-                }
-            }, 2000);
-        });
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('SW registered:', registration);
+                }).catch(err => {
+                    console.log('SW registration failed:', err);
+                });
+            });
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -1684,6 +2121,18 @@
             if (e.ctrlKey && e.key === 'k') {
                 e.preventDefault();
                 messageInput.focus();
+            }
+            if (e.ctrlKey && e.key === 'j') {
+                e.preventDefault();
+                rtcOverlay.style.display = 'flex';
+            }
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                personaToggle.click();
+            }
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                knowledgeToggle.click();
             }
         });
 
@@ -1705,13 +2154,14 @@
                 }
             }
         });
+    </script>
 
-        // Prevent form submit on Enter in modals
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') e.preventDefault();
-            });
-        });
+    <!-- PWA Manifest -->
+    <script>
+        document.head.insertAdjacentHTML('beforeend', `
+            <link rel="manifest" href="manifest.json">
+            <meta name="theme-color" content="#6C5CE7">
+        `);
     </script>
 </body>
 </html>
