@@ -8,15 +8,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>NexusAI — Advanced AI Assistant</title>
     
-    <!-- Valid Manifest & Icon -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTmV4dXNBSSIsInNob3J0X25hbWUiOiJOZXh1c0FJIiwiZGVzY3JpcHRpb24iOiJBZHZhbmNlZCBBSSBBc3Npc3RhbnQiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzZDNUNFNyIsInRoZW1lX2NvbG9yIjoiIzZDNUNFNyJ9">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     
-    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
-    <!-- Real Markdown & Syntax Highlighting -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -34,6 +31,7 @@
             --border: #e2e8f0;
             --success: #10b981;
             --error: #ef4444;
+            --warning: #f59e0b;
             --radius: 16px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -61,18 +59,15 @@
         body {
             background: var(--bg);
             color: var(--text);
-            height: 100dvh; /* Dynamic viewport height for mobile */
+            height: 100dvh;
             overflow: hidden;
             position: relative;
         }
 
-        /* Hide Scrollbar but keep functionality */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
-        /* Header */
         .header {
             background: var(--card-bg);
             padding: 12px 16px;
@@ -146,7 +141,6 @@
             box-shadow: 0 0 0 1px var(--border);
         }
 
-        /* Chat Container */
         .chat-container {
             height: calc(100dvh - 140px);
             overflow-y: auto;
@@ -231,7 +225,6 @@
         }
         .msg-action-btn:hover { background: var(--input-bg); color: var(--primary); }
 
-        /* Markdown & Code Styling */
         .message-bubble pre {
             background: #282c34;
             border-radius: 10px;
@@ -268,7 +261,6 @@
         }
         .copy-code-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Typing Indicator */
         .typing-indicator { display: flex; gap: 5px; padding: 4px 0; }
         .typing-dot {
             width: 8px; height: 8px; border-radius: 50%;
@@ -282,7 +274,6 @@
             40% { transform: scale(1); opacity: 1; }
         }
 
-        /* Input Area - Mobile Optimized */
         .input-area {
             position: fixed;
             bottom: 0;
@@ -290,7 +281,7 @@
             right: 0;
             background: var(--card-bg);
             padding: 12px 16px;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom)); /* iPhone safe area */
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
             display: flex;
             align-items: flex-end;
             gap: 10px;
@@ -321,7 +312,7 @@
             border: none;
             background: transparent;
             color: var(--text);
-            font-size: 16px; /* CRITICAL: Prevents iOS auto-zoom */
+            font-size: 16px;
             outline: none;
             resize: none;
             max-height: 100px;
@@ -358,7 +349,6 @@
         .send-btn:hover { color: white; transform: scale(1.05); box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4); }
         .send-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        /* Image Preview */
         .attachment-preview {
             display: none;
             position: absolute;
@@ -387,7 +377,6 @@
             align-items: center; justify-content: center;
         }
 
-        /* Sidebar & Backdrop */
         .sidebar-backdrop {
             position: fixed; inset: 0; background: rgba(0,0,0,0.4);
             z-index: 89; opacity: 0; pointer-events: none;
@@ -429,65 +418,274 @@
         }
         .new-chat-btn:active { transform: scale(0.98); }
 
-        /* Modals */
+        /* Enhanced Modal Styles */
         .modal {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
             z-index: 200; justify-content: center; align-items: center;
             backdrop-filter: blur(4px); padding: 20px;
         }
         .modal-content {
-            background: var(--card-bg); padding: 24px; border-radius: 20px;
-            width: 100%; max-width: 400px; box-shadow: var(--shadow);
+            background: var(--card-bg); padding: 28px; border-radius: 24px;
+            width: 100%; max-width: 420px; box-shadow: var(--shadow);
             animation: slideUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-size: 1.2rem; font-weight: 700; }
-        .close-modal { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; }
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 24px; 
+        }
+        .modal-title { font-size: 1.3rem; font-weight: 700; }
+        .close-modal { 
+            background: none; 
+            border: none; 
+            font-size: 1.8rem; 
+            color: var(--text-secondary); 
+            cursor: pointer; 
+            line-height: 1;
+        }
         
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
-        .form-input {
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px;
-            background: var(--input-bg); color: var(--text); font-size: 16px; outline: none;
+        /* Auth Tabs */
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 12px;
         }
-        .form-input:focus { border-color: var(--primary); }
-        .submit-btn {
-            width: 100%; padding: 14px; background: var(--primary); color: white; border: none;
-            border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 8px;
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .auth-tab.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        /* Toast */
+        .form-group { margin-bottom: 18px; }
+        .form-label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            color: var(--text-secondary); 
+        }
+        .form-input {
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 1px solid var(--border); 
+            border-radius: 12px;
+            background: var(--input-bg); 
+            color: var(--text); 
+            font-size: 16px; 
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        /* Phone Input with Country Code */
+        .phone-input-group {
+            display: flex;
+            gap: 8px;
+        }
+        .country-code {
+            width: 80px;
+            padding: 12px 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+        }
+        .phone-input {
+            flex: 1;
+        }
+
+        .submit-btn {
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; 
+            border: none;
+            border-radius: 12px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-top: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+        }
+        .submit-btn:active { transform: translateY(0); }
+
+        /* Social Login Buttons */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .divider span { padding: 0 12px; }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: var(--transition);
+            margin-bottom: 10px;
+        }
+        .social-btn:hover {
+            background: var(--input-bg);
+            border-color: var(--primary);
+        }
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* OTP Input */
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .otp-input {
+            width: 50px;
+            height: 56px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text);
+            outline: none;
+            transition: var(--transition);
+        }
+        .otp-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .resend-otp a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .resend-otp a:hover { text-decoration: underline; }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .switch-form {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .switch-form:hover { text-decoration: underline; }
+
         .toast {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--text); color: white; padding: 12px 20px; border-radius: 50px;
-            z-index: 300; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 8px;
-            font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: fixed; 
+            bottom: 100px; 
+            left: 50%; 
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text); 
+            color: white; 
+            padding: 12px 20px; 
+            border-radius: 50px;
+            z-index: 300; 
+            opacity: 0; 
+            transition: all 0.3s; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            font-size: 0.9rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast.success { background: var(--success); }
         .toast.error { background: var(--error); }
 
-        /* Floating Action Button (Mobile) */
         .fab {
-            position: fixed; bottom: 90px; right: 16px; width: 52px; height: 52px;
-            background: var(--primary); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
-            cursor: pointer; z-index: 40; border: none;
+            position: fixed; 
+            bottom: 90px; 
+            right: 16px; 
+            width: 52px; 
+            height: 52px;
+            background: var(--primary); 
+            color: white; 
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 1.3rem; 
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+            cursor: pointer; 
+            z-index: 40; 
+            border: none;
         }
         .fab:active { transform: scale(0.9); }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .sidebar { width: 85vw; }
             .message { max-width: 92%; }
             .header-btn { width: 38px; height: 38px; }
+            .modal-content { padding: 24px 20px; }
+            .otp-input { width: 45px; height: 50px; font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar & Backdrop -->
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -498,7 +696,6 @@
         <button class="new-chat-btn" id="newChatBtn"><i class="fas fa-plus"></i> New Chat</button>
     </aside>
 
-    <!-- Header -->
     <div class="header">
         <div class="logo">
             <div class="logo-icon"><i class="fas fa-bolt"></i></div>
@@ -508,11 +705,10 @@
             <button class="header-btn" id="themeToggle"><i class="fas fa-moon"></i></button>
             <button class="header-btn" id="toggleSidebar"><i class="fas fa-bars"></i></button>
             <button class="header-btn" id="loginBtn"><i class="fas fa-user"></i></button>
-            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-avatar" id="userAvatar" style="display:none;">U</div>
         </div>
     </div>
 
-    <!-- Chat Container -->
     <div class="chat-container" id="chatContainer">
         <div class="message ai-message">
             <div class="message-bubble">
@@ -523,7 +719,6 @@
         </div>
     </div>
 
-    <!-- Image Attachment Preview -->
     <div class="attachment-preview" id="attachmentPreview">
         <img id="previewImage" src="" alt="Preview">
         <div class="attachment-info">
@@ -533,7 +728,6 @@
         <button class="remove-attachment" id="removeAttachment"><i class="fas fa-trash"></i></button>
     </div>
 
-    <!-- Input Area -->
     <div class="input-area">
         <button class="input-btn" id="attachBtn" title="Attach"><i class="fas fa-paperclip"></i></button>
         <div class="input-wrapper">
@@ -542,60 +736,126 @@
         <button class="input-btn send-btn" id="sendBtn" title="Send"><i class="fas fa-paper-plane"></i></button>
     </div>
 
-    <!-- Voice FAB -->
     <button class="fab" id="voiceBtn" title="Voice Input"><i class="fas fa-microphone"></i></button>
 
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
+    <!-- Enhanced Login/Signup Modal -->
+    <div class="modal" id="authModal">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="modal-title">Welcome Back</span>
-                <button class="close-modal" id="closeLoginModal">&times;</button>
+                <span class="modal-title" id="authTitle">Welcome Back</span>
+                <button class="close-modal" id="closeAuthModal">&times;</button>
             </div>
+
+            <!-- Auth Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input" id="loginEmail" required>
+                    <label class="form-label">Email or Phone</label>
+                    <input type="text" class="form-input" id="loginIdentifier" placeholder="email@example.com or +91 9876543210" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-input" id="loginPassword" required>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
                 </div>
                 <button type="submit" class="submit-btn">Sign In</button>
+
+                <div class="divider"><span>OR</span></div>
+
+                <button type="button" class="social-btn" id="gmailLoginBtn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Continue with Google
+                </button>
+
+                <button type="button" class="social-btn" id="phoneOtpBtn">
+                    <i class="fas fa-mobile-alt" style="font-size:1.2rem; color:var(--primary);"></i>
+                    Login with OTP
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="signupName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="signupEmail" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <div class="phone-input-group">
+                        <select class="country-code" id="countryCode">
+                            <option value="+91">🇮🇳 +91</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+44">🇬🇧 +44</option>
+                            <option value="+61">🇦🇺 +61</option>
+                            <option value="+81">🇯🇵 +81</option>
+                        </select>
+                        <input type="tel" class="form-input phone-input" id="signupPhone" placeholder="9876543210" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" placeholder="Create a strong password" required>
+                </div>
+                <button type="submit" class="submit-btn">Create Account</button>
+
+                <div class="divider"><span>OR</span></div>
+
+                <button type="button" class="social-btn" id="gmailSignupBtn">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Sign up with Google
+                </button>
+            </form>
+
+            <!-- OTP Verification Form -->
+            <form id="otpForm" style="display:none;">
+                <p style="text-align:center; margin-bottom:20px; color:var(--text-secondary);">
+                    Enter the 6-digit code sent to<br>
+                    <strong id="otpPhoneNumber" style="color:var(--text);">+91 9876543210</strong>
+                </p>
+                <div class="otp-input-group">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="0">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="1">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="2">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="3">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="4">
+                    <input type="text" class="otp-input" maxlength="1" data-otp-index="5">
+                </div>
+                <button type="submit" class="submit-btn">Verify OTP</button>
+                <div class="resend-otp">
+                    Didn't receive code? <a id="resendOtpBtn">Resend OTP</a>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast -->
     <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastText">Success</span></div>
 
     <script>
         // ==========================================
-        // 🚀 API INTEGRATION ZONE (YAHAN API LAGAYEN)
+        // 🚀 API INTEGRATION ZONE
         // ==========================================
         async function callRealAPI(conversationHistory) {
-            /* 
-               INSTRUCTIONS FOR API:
-               1. Niche API_URL aur API_KEY mein apni details dalein.
-               2. Yeh function standard OpenAI/Anthropic format expect karta hai.
-               3. Agar streaming chahiye, toh fetch ko ReadableStream se handle karein.
-            */
-            
-            const API_URL = "https://api.openai.com/v1/chat/completions"; // Apna endpoint yahan dalein
-            const API_KEY = "YOUR_API_KEY_HERE"; // Apni API Key yahan dalein
+            const API_URL = "https://api.openai.com/v1/chat/completions";
+            const API_KEY = "YOUR_API_KEY_HERE";
 
             const payload = {
-                model: "gpt-3.5-turbo", // Apna model name dalein
+                model: "gpt-3.5-turbo",
                 messages: conversationHistory,
                 temperature: 0.7
             };
 
             try {
-                // NOTE: Jab tak aap apni real API key nahi dalte, yeh mock response dega taaki app test ho sake.
-                // Jab ready ho, niche ki 'if (API_KEY === "YOUR_API_KEY_HERE")' line hata dena.
                 if (API_KEY === "YOUR_API_KEY_HERE") {
-                    await new Promise(r => setTimeout(r, 1000)); // Mock delay
-                    return "✅ **API Setup Ready!**\n\nAapne API integration zone configure nahi kiya hai. Code mein `callRealAPI` function ke andar apna `API_URL` aur `API_KEY` update karein. \n\nAapka message tha: *" + conversationHistory[conversationHistory.length-1].content + "*";
+                    await new Promise(r => setTimeout(r, 1000));
+                    return "✅ **API Setup Ready!**\n\nAapne API integration zone configure nahi kiya hai. Code mein `callRealAPI` function ke andar apna `API_URL` aur `API_KEY` update karein.";
                 }
 
                 const response = await fetch(API_URL, {
@@ -620,11 +880,221 @@
                 throw new Error("Network error. Please check your API key and connection.");
             }
         }
-        // ==========================================
-        // END API ZONE
-        // ==========================================
 
-        // DOM Elements
+        // ==========================================
+        // AUTHENTICATION SYSTEM
+        // ==========================================
+        let currentUser = null;
+        let otpTimer = null;
+
+        // Mock user database (In real app, this would be backend)
+        const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+
+        function saveMockUsers() {
+            localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
+        }
+
+        // Auth Tab Switching
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.getElementById('authTitle').textContent = tabName === 'login' ? 'Welcome Back' : 'Create Account';
+                document.getElementById('loginForm').style.display = tabName === 'login' ? 'block' : 'none';
+                document.getElementById('signupForm').style.display = tabName === 'signup' ? 'block' : 'none';
+                document.getElementById('otpForm').style.display = 'none';
+            });
+        });
+
+        // Login Form Submit
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            // Check if identifier is email or phone
+            const isEmail = identifier.includes('@');
+            const user = mockUsers.find(u => 
+                (isEmail ? u.email === identifier : u.phone === identifier) && u.password === password
+            );
+
+            if (user) {
+                loginUser(user);
+            } else {
+                showToast('Invalid credentials. Please try again.', 'error');
+            }
+        });
+
+        // Signup Form Submit
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const countryCode = document.getElementById('countryCode').value;
+            const phone = document.getElementById('signupPhone').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            // Check if user already exists
+            if (mockUsers.find(u => u.email === email || u.phone === countryCode + phone)) {
+                showToast('User already exists. Please login.', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                phone: countryCode + phone,
+                password,
+                createdAt: new Date().toISOString()
+            };
+
+            mockUsers.push(newUser);
+            saveMockUsers();
+            loginUser(newUser);
+            showToast('Account created successfully!', 'success');
+        });
+
+        // Phone OTP Login
+        document.getElementById('phoneOtpBtn').addEventListener('click', () => {
+            const phone = prompt('Enter your phone number (with country code, e.g., +919876543210):');
+            if (phone && phone.length >= 10) {
+                document.getElementById('otpPhoneNumber').textContent = phone;
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('otpForm').style.display = 'block';
+                document.getElementById('authTitle').textContent = 'Verify OTP';
+                startOtpTimer();
+                showToast('OTP sent to ' + phone, 'success');
+            }
+        });
+
+        // OTP Input Handling
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // OTP Form Submit
+        document.getElementById('otpForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const otp = Array.from(otpInputs).map(i => i.value).join('');
+            
+            if (otp.length === 6) {
+                // Mock OTP verification (In real app, verify with backend)
+                const phone = document.getElementById('otpPhoneNumber').textContent;
+                let user = mockUsers.find(u => u.phone === phone);
+                
+                if (!user) {
+                    // Create new user if doesn't exist
+                    user = {
+                        id: Date.now(),
+                        name: 'User',
+                        email: '',
+                        phone: phone,
+                        password: '',
+                        createdAt: new Date().toISOString()
+                    };
+                    mockUsers.push(user);
+                    saveMockUsers();
+                }
+                
+                loginUser(user);
+                showToast('Phone verified successfully!', 'success');
+            } else {
+                showToast('Please enter complete OTP', 'error');
+            }
+        });
+
+        // Resend OTP
+        document.getElementById('resendOtpBtn').addEventListener('click', () => {
+            startOtpTimer();
+            showToast('OTP resent successfully!', 'success');
+        });
+
+        function startOtpTimer() {
+            let seconds = 60;
+            const resendBtn = document.getElementById('resendOtpBtn');
+            resendBtn.style.pointerEvents = 'none';
+            resendBtn.style.opacity = '0.5';
+            
+            if (otpTimer) clearInterval(otpTimer);
+            otpTimer = setInterval(() => {
+                seconds--;
+                resendBtn.textContent = `Resend in ${seconds}s`;
+                if (seconds <= 0) {
+                    clearInterval(otpTimer);
+                    resendBtn.textContent = 'Resend OTP';
+                    resendBtn.style.pointerEvents = 'auto';
+                    resendBtn.style.opacity = '1';
+                }
+            }, 1000);
+        }
+
+        // Gmail Login (Mock)
+        document.getElementById('gmailLoginBtn').addEventListener('click', () => {
+            const email = prompt('Enter your Gmail address:');
+            if (email && email.includes('@gmail.com')) {
+                let user = mockUsers.find(u => u.email === email);
+                if (!user) {
+                    user = {
+                        id: Date.now(),
+                        name: email.split('@')[0],
+                        email: email,
+                        phone: '',
+                        password: '',
+                        createdAt: new Date().toISOString()
+                    };
+                    mockUsers.push(user);
+                    saveMockUsers();
+                }
+                loginUser(user);
+                showToast('Logged in with Google!', 'success');
+            }
+        });
+
+        document.getElementById('gmailSignupBtn').addEventListener('click', () => {
+            document.getElementById('gmailLoginBtn').click();
+        });
+
+        // Login User
+        function loginUser(user) {
+            currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            updateUserUI();
+            document.getElementById('authModal').style.display = 'none';
+            showToast(`Welcome, ${user.name}!`, 'success');
+        }
+
+        // Update UI after login
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('userAvatar').style.display = 'flex';
+                document.getElementById('loginBtn').style.display = 'none';
+            }
+        }
+
+        // Check for saved user on load
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            updateUserUI();
+        }
+
+        // ==========================================
+        // REST OF THE APP CODE
+        // ==========================================
         const getEl = (id) => document.getElementById(id);
         const chatContainer = getEl('chatContainer');
         const messageInput = getEl('messageInput');
@@ -640,9 +1110,8 @@
         let currentSessionId = 'sess_' + Math.random().toString(36).substring(2, 15);
         let isTyping = false;
         let selectedImage = null;
-        let conversationHistory = []; // Stores {role: 'user'|'assistant', content: '...'}
+        let conversationHistory = [];
 
-        // Initialize Markdown
         marked.setOptions({
             highlight: function(code, lang) {
                 const language = hljs.getLanguage(lang) ? lang : 'plaintext';
@@ -651,7 +1120,6 @@
             langPrefix: 'hljs language-'
         });
 
-        // Utility: Toast
         function showToast(msg, type = 'success') {
             toast.className = `toast ${type}`;
             toastText.textContent = msg;
@@ -660,7 +1128,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Utility: Add Message to UI
         function addMessageToUI(role, text, save = true) {
             const div = document.createElement('div');
             div.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
@@ -682,7 +1149,6 @@
             chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
             
-            // Apply syntax highlighting to new code blocks
             div.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
             });
@@ -697,7 +1163,6 @@
             navigator.clipboard.writeText(text).then(() => showToast('Copied!'));
         };
 
-        // Typing Indicator
         function showTyping() {
             const div = document.createElement('div');
             div.className = 'message ai-message';
@@ -717,7 +1182,6 @@
             if (el) el.remove();
         }
 
-        // Send Message Logic
         async function sendMessage() {
             if (isTyping) return;
             const text = messageInput.value.trim();
@@ -730,7 +1194,6 @@
             let finalText = text;
             if (selectedImage) {
                 finalText += `\n\n[Image Attached: ${getEl('previewName').textContent}]`;
-                // Note: Real API mein yahan image URL ya base64 payload mein add karein
             }
 
             addMessageToUI('user', finalText);
@@ -755,7 +1218,6 @@
             }
         }
 
-        // Attachment Handling
         getEl('attachBtn').addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -782,7 +1244,6 @@
             getEl('previewImage').src = '';
         }
 
-        // Input Auto-resize (Mobile Friendly)
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 100) + 'px';
@@ -797,7 +1258,6 @@
 
         sendBtn.addEventListener('click', sendMessage);
 
-        // Sidebar & Modal Controls
         function toggleSidebar(open) {
             sidebar.classList.toggle('open', open);
             sidebarBackdrop.classList.toggle('active', open);
@@ -806,22 +1266,16 @@
         getEl('closeSidebar').addEventListener('click', () => toggleSidebar(false));
         sidebarBackdrop.addEventListener('click', () => toggleSidebar(false));
 
-        getEl('loginBtn').addEventListener('click', () => getEl('loginModal').style.display = 'flex');
-        getEl('closeLoginModal').addEventListener('click', () => getEl('loginModal').style.display = 'none');
-        getEl('loginModal').addEventListener('click', (e) => {
-            if (e.target === getEl('loginModal')) getEl('loginModal').style.display = 'none';
+        getEl('loginBtn').addEventListener('click', () => {
+            getEl('authModal').style.display = 'flex';
+            // Reset to login tab
+            document.querySelector('.auth-tab[data-tab="login"]').click();
+        });
+        getEl('closeAuthModal').addEventListener('click', () => getEl('authModal').style.display = 'none');
+        getEl('authModal').addEventListener('click', (e) => {
+            if (e.target === getEl('authModal')) getEl('authModal').style.display = 'none';
         });
 
-        getEl('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = getEl('loginEmail').value;
-            getEl('userAvatar').textContent = email[0].toUpperCase();
-            getEl('loginBtn').style.display = 'none';
-            getEl('loginModal').style.display = 'none';
-            showToast('Logged in successfully!');
-        });
-
-        // Theme Toggle
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -829,13 +1283,11 @@
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
 
-        // Load Saved Theme
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.classList.add('dark-mode');
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
 
-        // History Management (Mock LocalStorage)
         function saveToHistory() {
             const title = conversationHistory[0]?.content?.substring(0, 30) + '...' || 'New Chat';
             const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
@@ -872,7 +1324,6 @@
             toggleSidebar(false);
         });
 
-        // Voice Input (Web Speech API)
         getEl('voiceBtn').addEventListener('click', () => {
             if (!('webkitSpeechRecognition' in window)) {
                 showToast('Voice not supported in this browser', 'error');
@@ -887,7 +1338,7 @@
             };
             recognition.onresult = (e) => {
                 messageInput.value = e.results[0][0].transcript;
-                messageInput.dispatchEvent(new Event('input')); // Trigger auto-resize
+                messageInput.dispatchEvent(new Event('input'));
             };
             recognition.onend = () => {
                 getEl('voiceBtn').innerHTML = '<i class="fas fa-microphone"></i>';
@@ -896,11 +1347,7 @@
             recognition.start();
         });
 
-        // Init
         renderHistory();
-        if (conversationHistory.length === 0) {
-            // Welcome message already in HTML
-        }
     </script>
 </body>
 </html>
